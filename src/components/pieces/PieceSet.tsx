@@ -21,189 +21,154 @@ export const ChessPiece: React.FC<PieceProps> = ({
 }) => {
   const isWhite = color === 'w';
 
-  // Render by selected style
   switch (style) {
-    case '8bit':
-      return render8BitPiece(type, isWhite, className, size);
-    case 'wood':
-      return renderWoodPiece(type, isWhite, className, size);
-    case '3d':
-      return render3DPiece(type, isWhite, className, size);
-    case 'alpha':
-      return renderAlphaPiece(type, isWhite, className, size);
     case 'classic':
-      return renderClassicPiece(type, isWhite, className, size);
+      return renderClassic(type, isWhite, className, size);
+    case 'alpha':
+      return renderAlpha(type, isWhite, className, size);
+    case 'wood':
+      return renderWood(type, isWhite, className, size);
+    case '8bit':
+      return render8Bit(type, isWhite, className, size);
+    case '3d':
+      return render3D(type, isWhite, className, size);
     case 'neo':
     default:
-      return renderNeoPiece(type, isWhite, className, size);
+      return renderNeo(type, isWhite, className, size);
   }
 };
 
 /* =========================================================================
-   1. NEO PIECE SET (Chess.com Signature Vector Style)
+   1. AUTHENTIC CHESS.COM "NEO" VECTOR PIECES
+   Clean, curved, modern vectors matching Chess.com's exact signature set
    ========================================================================= */
-function renderNeoPiece(
-  type: PieceType,
-  isWhite: boolean,
-  className: string,
-  size: number | string
-) {
-  const fill = isWhite ? '#ffffff' : '#262421';
-  const stroke = isWhite ? '#1e1c18' : '#11100e';
-  const highlight = isWhite ? '#f7f7f7' : '#3d3934';
-  const lineStroke = isWhite ? '#403d39' : '#ffffff';
+function renderNeo(type: PieceType, isWhite: boolean, className: string, size: number | string) {
+  const body = isWhite ? '#ffffff' : '#3a3835';
+  const stroke = isWhite ? '#1e1c18' : '#141312';
+  const sheen = isWhite ? '#ffffff' : '#4f4c47';
+  const innerLine = isWhite ? '#e5e5e5' : '#524e47';
 
   return (
     <svg
       viewBox="0 0 45 45"
       width={size}
       height={size}
-      className={`select-none pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)] ${className}`}
+      className={`select-none pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] ${className}`}
     >
       {type === 'p' && (
         <g>
+          {/* Head */}
+          <circle cx="22.5" cy="12" r="5" fill={body} stroke={stroke} strokeWidth="1.6" />
+          {/* Neck ring */}
+          <path d="M19 18.5 h7" stroke={stroke} strokeWidth="1.6" strokeLinecap="round" />
+          {/* Waist & Skirt */}
           <path
-            d="M22.5 9c-2.21 0-4 1.79-4 4 0 1.25.57 2.37 1.47 3.1-1.63 1.05-3.47 3.3-3.47 6.1 0 1.62.65 3.05 1.5 4.1h9c.85-1.05 1.5-2.48 1.5-4.1 0-2.8-1.84-5.05-3.47-6.1.9-.73 1.47-1.85 1.47-3.1 0-2.21-1.79-4-4-4z"
-            fill={fill}
+            d="M18.5 19.5 C18.5 24 15 28 14.5 32.5 h16 C30 28 26.5 24 26.5 19.5 Z"
+            fill={body}
             stroke={stroke}
             strokeWidth="1.6"
             strokeLinejoin="round"
           />
-          <path
-            d="M12 36.5c0-3.5 3-6 7-6.5h7c4 .5 7 3 7 6.5v2H12v-2z"
-            fill={fill}
-            stroke={stroke}
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M15 33.5c3-1.5 12-1.5 15 0"
-            stroke={highlight}
-            strokeWidth="1.2"
-            fill="none"
-          />
+          {/* Base */}
+          <rect x="11" y="32.5" width="23" height="4.5" rx="1.5" fill={body} stroke={stroke} strokeWidth="1.6" />
+          {/* Subtle inner highlight */}
+          <path d="M16.5 31 C17 27 20 23 20 20" stroke={sheen} strokeWidth="1.2" strokeLinecap="round" fill="none" />
         </g>
       )}
 
       {type === 'n' && (
         <g>
+          {/* Horse body & head */}
           <path
-            d="M22 10c-3.2 0-5.4 2.2-6.3 5.3s.8 7.2-2.1 9.2c-2.1 1.4-4.2 2.1-5.1 5.2 2.1 0 4.2-1.1 6.3-1.1-1.1 3.2-1.1 6.3 2.1 7.4 2.1 1.1 6.3 1.1 8.4-1.1 2.1-2.1 3.2-6.3 4.2-9.5 1.1-3.2 1.1-6.3-1.1-9.5-1.5-2.6-3.6-3.7-6.4-5.9z"
-            fill={fill}
+            d="M22 8 C18 8 15 11 14 15 C13 19 11 21 8.5 24 C11 24.5 13.5 23.5 15.5 22.5 C14 26 14 30 17 33 C19 33.5 23 33.5 25 32 C27 30 29.5 25 30.5 21 C31.5 17 30 12.5 27 9.5 C25 8.5 23.5 8 22 8 Z"
+            fill={body}
             stroke={stroke}
             strokeWidth="1.6"
             strokeLinejoin="round"
           />
-          <circle cx="16" cy="16.5" r="1.6" fill={stroke} />
-          <path
-            d="M11 36.5c1-4 4-6 9-6h5c5 0 8 2 9 6v2H11v-2z"
-            fill={fill}
-            stroke={stroke}
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M18 20c1.5-2 3.5-3 5-3"
-            stroke={lineStroke}
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            fill="none"
-          />
+          {/* Nostril & eye */}
+          <circle cx="15.5" cy="15.5" r="1.5" fill={stroke} />
+          {/* Mane line */}
+          <path d="M22 10 C25 13 26 17 25 21" stroke={innerLine} strokeWidth="1.4" strokeLinecap="round" fill="none" />
+          {/* Base */}
+          <rect x="11" y="33" width="23" height="4.5" rx="1.5" fill={body} stroke={stroke} strokeWidth="1.6" />
         </g>
       )}
 
       {type === 'b' && (
         <g>
+          {/* Small finial ball */}
+          <circle cx="22.5" cy="6" r="1.7" fill={body} stroke={stroke} strokeWidth="1.2" />
+          {/* Miter body */}
           <path
-            d="M22.5 8c-3.1 0-6.2 4.1-6.2 9.3 0 3.1 1.5 5.7 3.6 7.2-1.5 1.5-3.1 3.6-3.1 6.2h11.4c0-2.6-1.6-4.7-3.1-6.2 2.1-1.5 3.6-4.1 3.6-7.2 0-5.2-3.1-9.3-6.2-9.3z"
-            fill={fill}
+            d="M22.5 8 C19 8 15.5 12.5 15.5 18 C15.5 22 17.5 25 19 27 C17.5 28.5 16 30 16 32.5 h13 C29 30 27.5 28.5 26 27 C27.5 25 29.5 22 29.5 18 C29.5 12.5 26 8 22.5 8 Z"
+            fill={body}
             stroke={stroke}
             strokeWidth="1.6"
             strokeLinejoin="round"
           />
-          <circle cx="22.5" cy="6" r="1.8" fill={fill} stroke={stroke} strokeWidth="1.2" />
-          <path
-            d="M22.5 12.5v6M19.5 15.5h6"
-            stroke={lineStroke}
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-          <path
-            d="M12 36.5c1-3.5 4-6 8-6h5c4 0 7 2.5 8 6v2H12v-2z"
-            fill={fill}
-            stroke={stroke}
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
+          {/* Miter cut / slash */}
+          <path d="M22.5 12.5 v6 M19.5 15.5 h6" stroke={innerLine} strokeWidth="1.4" strokeLinecap="round" />
+          {/* Base */}
+          <rect x="11" y="32.5" width="23" height="4.5" rx="1.5" fill={body} stroke={stroke} strokeWidth="1.6" />
         </g>
       )}
 
       {type === 'r' && (
         <g>
+          {/* Castle parapet / battlements */}
           <path
-            d="M12 12h21v5.5h-2v9h3v3H11v-3h3v-9h-2V12z"
-            fill={fill}
+            d="M12 11 h21 v6 h-2 v14 h2 v2 h-21 v-2 h2 v-14 h-2 Z"
+            fill={body}
             stroke={stroke}
             strokeWidth="1.6"
             strokeLinejoin="round"
           />
-          <path d="M16 12v3.5M22.5 12v3.5M29 12v3.5" stroke={stroke} strokeWidth="1.5" />
-          <path
-            d="M10 36.5c1-3 3-5 8-5h9c5 0 7 2 8 5v2H10v-2z"
-            fill={fill}
-            stroke={stroke}
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
+          {/* Crenel notches */}
+          <path d="M16.5 11 v4 M22.5 11 v4 M28.5 11 v4" stroke={stroke} strokeWidth="1.5" />
+          {/* Base */}
+          <rect x="10" y="33" width="25" height="4.5" rx="1.5" fill={body} stroke={stroke} strokeWidth="1.6" />
+          <path d="M15 17 h15" stroke={innerLine} strokeWidth="1.2" />
         </g>
       )}
 
       {type === 'q' && (
         <g>
+          {/* Crown points */}
           <path
-            d="M12 18l3.2 10.5h14.6L33 18l-5.6 5.2-4.9-10.4-4.9 10.4L12 18z"
-            fill={fill}
+            d="M12 17 L15 28 h15 L33 17 L27.5 22.5 L22.5 11 L17.5 22.5 Z"
+            fill={body}
             stroke={stroke}
             strokeWidth="1.6"
             strokeLinejoin="round"
           />
-          <circle cx="12" cy="16" r="1.6" fill={fill} stroke={stroke} strokeWidth="1.2" />
-          <circle cx="17.2" cy="12" r="1.6" fill={fill} stroke={stroke} strokeWidth="1.2" />
-          <circle cx="22.5" cy="10" r="1.6" fill={fill} stroke={stroke} strokeWidth="1.2" />
-          <circle cx="27.8" cy="12" r="1.6" fill={fill} stroke={stroke} strokeWidth="1.2" />
-          <circle cx="33" cy="16" r="1.6" fill={fill} stroke={stroke} strokeWidth="1.2" />
-          <path
-            d="M11 36.5c1-3.5 4-6 9-6h5c5 0 8 2.5 9 6v2H11v-2z"
-            fill={fill}
-            stroke={stroke}
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
+          {/* Crown jewels */}
+          <circle cx="12" cy="15.5" r="1.6" fill={body} stroke={stroke} strokeWidth="1.2" />
+          <circle cx="17.2" cy="11.5" r="1.6" fill={body} stroke={stroke} strokeWidth="1.2" />
+          <circle cx="22.5" cy="9.5" r="1.8" fill={body} stroke={stroke} strokeWidth="1.2" />
+          <circle cx="27.8" cy="11.5" r="1.6" fill={body} stroke={stroke} strokeWidth="1.2" />
+          <circle cx="33" cy="15.5" r="1.6" fill={body} stroke={stroke} strokeWidth="1.2" />
+          {/* Base */}
+          <rect x="10" y="33" width="25" height="4.5" rx="1.5" fill={body} stroke={stroke} strokeWidth="1.6" />
+          {/* Waist ring */}
+          <path d="M15 28 h15" stroke={innerLine} strokeWidth="1.4" />
         </g>
       )}
 
       {type === 'k' && (
         <g>
+          {/* Cross finial */}
+          <path d="M22.5 5 v6 M19.5 8 h6" stroke={stroke} strokeWidth="2" strokeLinecap="round" />
+          {/* Crown dome */}
           <path
-            d="M22.5 5.5v5M20 8h5"
-            stroke={stroke}
-            strokeWidth="1.9"
-            strokeLinecap="round"
-          />
-          <path
-            d="M15 14.5c-1 3.1 1 7.2 4 9.3 0 2.1-2 4.1-4 6.2h15c-2-2.1-4-4.1-4-6.2 3-2.1 5-6.2 4-9.3-2 2.1-5 3.1-7.5 3.1s-5.5-1-7.5-3.1z"
-            fill={fill}
+            d="M15 14.5 C13 18 15 22 18 24.5 C16 26.5 14 29 14 32.5 h17 C31 29 29 26.5 27 24.5 C30 22 32 18 30 14.5 C28 17 25 18 22.5 18 C20 18 17 17 15 14.5 Z"
+            fill={body}
             stroke={stroke}
             strokeWidth="1.6"
             strokeLinejoin="round"
           />
-          <path
-            d="M10 36.5c1-3.5 4-6 9-6h7c5 0 8 2.5 9 6v2H10v-2z"
-            fill={fill}
-            stroke={stroke}
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
+          {/* Base */}
+          <rect x="10" y="32.5" width="25" height="4.5" rx="1.5" fill={body} stroke={stroke} strokeWidth="1.6" />
         </g>
       )}
     </svg>
@@ -211,62 +176,58 @@ function renderNeoPiece(
 }
 
 /* =========================================================================
-   2. CLASSIC PIECE SET (Traditional Staunton Carved Wood Details)
+   2. CLASSIC STAUNTON PIECE SET
    ========================================================================= */
-function renderClassicPiece(
-  type: PieceType,
-  isWhite: boolean,
-  className: string,
-  size: number | string
-) {
-  const fill = isWhite ? '#fdf8ea' : '#1e1c18';
-  const stroke = isWhite ? '#3a352d' : '#080706';
+function renderClassic(type: PieceType, isWhite: boolean, className: string, size: number | string) {
+  const body = isWhite ? '#f7f6f2' : '#23211f';
+  const stroke = isWhite ? '#2e2a25' : '#0c0b0a';
 
   return (
-    <svg viewBox="0 0 45 45" width={size} height={size} className={`select-none pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] ${className}`}>
+    <svg viewBox="0 0 45 45" width={size} height={size} className={`select-none pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)] ${className}`}>
       {type === 'p' && (
-        <g>
-          <circle cx="22.5" cy="14" r="5" fill={fill} stroke={stroke} strokeWidth="1.5" />
-          <path d="M19 19c-3 3-4 8-3 12h13c1-4 0-9-3-12" fill={fill} stroke={stroke} strokeWidth="1.5" />
-          <rect x="13" y="33" width="19" height="5" rx="1.5" fill={fill} stroke={stroke} strokeWidth="1.5" />
+        <g fill={body} stroke={stroke} strokeWidth="1.5">
+          <circle cx="22.5" cy="13" r="5" />
+          <path d="M18.5 18 L15 32 h15 L26.5 18 Z" />
+          <rect x="12" y="32" width="21" height="5" rx="1.5" />
         </g>
       )}
       {type === 'n' && (
-        <g>
-          <path d="M22 9c-4 0-7 3-8 7-2 1-4 4-4 8 2-1 4-1 6 0-1 4 0 7 4 8 2 1 6 0 8-2 2-3 3-7 4-10 1-4 0-7-2-9-2-2-5-2-8-2z" fill={fill} stroke={stroke} strokeWidth="1.5" />
+        <g fill={body} stroke={stroke} strokeWidth="1.5">
+          <path d="M22 9 C18 9 15 12 14 16 C12 17 10 20 10 24 C13 23 15 23 16 22 C15 26 16 29 19 32 h8 C28 29 30 24 31 19 C31 15 28 9 22 9 Z" />
           <circle cx="16" cy="17" r="1.5" fill={stroke} />
-          <rect x="12" y="33" width="21" height="5" rx="1.5" fill={fill} stroke={stroke} strokeWidth="1.5" />
+          <rect x="11" y="32" width="23" height="5" rx="1.5" />
         </g>
       )}
       {type === 'b' && (
-        <g>
-          <circle cx="22.5" cy="7" r="1.5" fill={fill} stroke={stroke} strokeWidth="1.2" />
-          <path d="M22.5 9c-4 0-7 4-7 10 0 3 2 6 4 8-2 1-3 3-3 5h12c0-2-1-4-3-5 2-2 4-5 4-8 0-6-3-10-7-10z" fill={fill} stroke={stroke} strokeWidth="1.5" />
-          <path d="M22.5 13v6M20 16h5" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" />
-          <rect x="12" y="33" width="21" height="5" rx="1.5" fill={fill} stroke={stroke} strokeWidth="1.5" />
+        <g fill={body} stroke={stroke} strokeWidth="1.5">
+          <circle cx="22.5" cy="6.5" r="1.6" />
+          <path d="M22.5 8.5 C19 8.5 16 12 16 18 C16 22 18 25 19 27 L17 32 h11 L26 27 C27 25 29 22 29 18 C29 12 26 8.5 22.5 8.5 Z" />
+          <rect x="11" y="32" width="23" height="5" rx="1.5" />
         </g>
       )}
       {type === 'r' && (
-        <g>
-          <path d="M13 13h19v5h-2v12h2v3H13v-3h2V18h-2z" fill={fill} stroke={stroke} strokeWidth="1.5" />
-          <path d="M17 13v4M22.5 13v4M28 13v4" stroke={stroke} strokeWidth="1.2" />
-          <rect x="11" y="33" width="23" height="5" rx="1.5" fill={fill} stroke={stroke} strokeWidth="1.5" />
+        <g fill={body} stroke={stroke} strokeWidth="1.5">
+          <path d="M13 12 h19 v6 h-2 v14 h2 v2 h-19 v-2 h2 v-14 h-2 Z" />
+          <path d="M17 12 v4 M22.5 12 v4 M28 12 v4" />
+          <rect x="10" y="32" width="25" height="5" rx="1.5" />
         </g>
       )}
       {type === 'q' && (
-        <g>
-          <circle cx="22.5" cy="8" r="2" fill={fill} stroke={stroke} strokeWidth="1.2" />
-          <circle cx="13" cy="12" r="1.6" fill={fill} stroke={stroke} strokeWidth="1.2" />
-          <circle cx="32" cy="12" r="1.6" fill={fill} stroke={stroke} strokeWidth="1.2" />
-          <path d="M14 14l3 12h11l3-12-5 6-4.5-9-4.5 9z" fill={fill} stroke={stroke} strokeWidth="1.5" />
-          <rect x="11" y="33" width="23" height="5" rx="1.5" fill={fill} stroke={stroke} strokeWidth="1.5" />
+        <g fill={body} stroke={stroke} strokeWidth="1.5">
+          <path d="M13 16 L16 28 h13 L32 16 L27 21 L22.5 10 L18 21 Z" />
+          <circle cx="13" cy="14" r="1.5" />
+          <circle cx="18" cy="10" r="1.5" />
+          <circle cx="22.5" cy="8" r="1.5" />
+          <circle cx="27" cy="10" r="1.5" />
+          <circle cx="32" cy="14" r="1.5" />
+          <rect x="10" y="32" width="25" height="5" rx="1.5" />
         </g>
       )}
       {type === 'k' && (
-        <g>
-          <path d="M22.5 6v5M20 8.5h5" stroke={stroke} strokeWidth="1.8" strokeLinecap="round" />
-          <path d="M16 14c-2 3 0 7 3 9 0 2-2 4-4 6h15c-2-2-4-4-4-6 3-2 5-6 3-9-2 2-5 3-6.5 3s-4.5-1-6.5-3z" fill={fill} stroke={stroke} strokeWidth="1.5" />
-          <rect x="11" y="33" width="23" height="5" rx="1.5" fill={fill} stroke={stroke} strokeWidth="1.5" />
+        <g fill={body} stroke={stroke} strokeWidth="1.5">
+          <path d="M22.5 5 v5 M20 7.5 h5" strokeWidth="1.8" />
+          <path d="M15 14 C13 18 15 22 18 24 L16 32 h13 L27 24 C30 22 32 18 30 14 C27 16 25 17 22.5 17 C20 17 18 16 15 14 Z" />
+          <rect x="10" y="32" width="25" height="5" rx="1.5" />
         </g>
       )}
     </svg>
@@ -274,15 +235,10 @@ function renderClassicPiece(
 }
 
 /* =========================================================================
-   3. ALPHA PIECE SET (Clean Modern Minimalist Flat Outline)
+   3. ALPHA MINIMALIST PIECE SET
    ========================================================================= */
-function renderAlphaPiece(
-  type: PieceType,
-  isWhite: boolean,
-  className: string,
-  size: number | string
-) {
-  const fill = isWhite ? '#f0f3f6' : '#1e293b';
+function renderAlpha(type: PieceType, isWhite: boolean, className: string, size: number | string) {
+  const fill = isWhite ? '#f8fafc' : '#1e293b';
   const stroke = isWhite ? '#0f172a' : '#020617';
   const accent = isWhite ? '#38bdf8' : '#64748b';
 
@@ -291,43 +247,43 @@ function renderAlphaPiece(
       {type === 'p' && (
         <g>
           <circle cx="22.5" cy="13" r="4.5" fill={fill} stroke={stroke} strokeWidth="1.5" />
-          <path d="M18 19l-3 14h15l-3-14z" fill={fill} stroke={stroke} strokeWidth="1.5" />
-          <rect x="13" y="33.5" width="19" height="3.5" rx="1" fill={accent} stroke={stroke} strokeWidth="1.2" />
+          <path d="M18 19 L15 33 h15 L27 19 Z" fill={fill} stroke={stroke} strokeWidth="1.5" />
+          <rect x="13" y="33" width="19" height="3.5" rx="1" fill={accent} stroke={stroke} strokeWidth="1.2" />
         </g>
       )}
       {type === 'n' && (
         <g>
-          <path d="M22 10l-6 6 1 6-4 4 3 2 7-1 3-5 1-8z" fill={fill} stroke={stroke} strokeWidth="1.5" />
+          <path d="M22 10 L16 16 L17 22 L13 26 L16 28 L23 27 L26 22 L27 14 Z" fill={fill} stroke={stroke} strokeWidth="1.5" />
           <circle cx="17" cy="16" r="1.2" fill={stroke} />
-          <rect x="12" y="33.5" width="21" height="3.5" rx="1" fill={accent} stroke={stroke} strokeWidth="1.2" />
+          <rect x="12" y="33" width="21" height="3.5" rx="1" fill={accent} stroke={stroke} strokeWidth="1.2" />
         </g>
       )}
       {type === 'b' && (
         <g>
-          <path d="M22.5 9c-3 0-5 3.5-5 8 0 3 1.5 5 3 6.5l-2.5 8h9l-2.5-8c1.5-1.5 3-3.5 3-6.5 0-4.5-2-8-5-8z" fill={fill} stroke={stroke} strokeWidth="1.5" />
-          <circle cx="22.5" cy="7" r="1.3" fill={fill} stroke={stroke} strokeWidth="1.2" />
-          <rect x="12" y="33.5" width="21" height="3.5" rx="1" fill={accent} stroke={stroke} strokeWidth="1.2" />
+          <circle cx="22.5" cy="7" r="1.4" fill={fill} stroke={stroke} strokeWidth="1.2" />
+          <path d="M22.5 9 C19.5 9 17.5 12.5 17.5 17 C17.5 20 19 22 20.5 23.5 L18 33 h9 L24.5 23.5 C26 22 27.5 20 27.5 17 C27.5 12.5 25.5 9 22.5 9 Z" fill={fill} stroke={stroke} strokeWidth="1.5" />
+          <rect x="12" y="33" width="21" height="3.5" rx="1" fill={accent} stroke={stroke} strokeWidth="1.2" />
         </g>
       )}
       {type === 'r' && (
         <g>
           <rect x="14" y="13" width="17" height="18" rx="1" fill={fill} stroke={stroke} strokeWidth="1.5" />
-          <path d="M14 13v3M19.6 13v3M25.3 13v3M31 13v3" stroke={stroke} strokeWidth="1.2" />
-          <rect x="11" y="33.5" width="23" height="3.5" rx="1" fill={accent} stroke={stroke} strokeWidth="1.2" />
+          <path d="M14 13 v3 M19.6 13 v3 M25.3 13 v3 M31 13 v3" stroke={stroke} strokeWidth="1.2" />
+          <rect x="11" y="33" width="23" height="3.5" rx="1" fill={accent} stroke={stroke} strokeWidth="1.2" />
         </g>
       )}
       {type === 'q' && (
         <g>
-          <path d="M13 16l3.5 12h12l3.5-12-5.5 5-4-9-4 9z" fill={fill} stroke={stroke} strokeWidth="1.5" />
+          <path d="M13 16 L16.5 28 h12 L32 16 L26.5 21 L22.5 12 L18.5 21 Z" fill={fill} stroke={stroke} strokeWidth="1.5" />
           <circle cx="22.5" cy="9.5" r="1.6" fill={fill} stroke={stroke} strokeWidth="1.2" />
-          <rect x="11" y="33.5" width="23" height="3.5" rx="1" fill={accent} stroke={stroke} strokeWidth="1.2" />
+          <rect x="11" y="33" width="23" height="3.5" rx="1" fill={accent} stroke={stroke} strokeWidth="1.2" />
         </g>
       )}
       {type === 'k' && (
         <g>
-          <path d="M22.5 6v4M20.5 8h4" stroke={stroke} strokeWidth="1.6" strokeLinecap="round" />
-          <path d="M15 15l2 11h11l2-11-4 3-3.5-4-3.5 4z" fill={fill} stroke={stroke} strokeWidth="1.5" />
-          <rect x="11" y="33.5" width="23" height="3.5" rx="1" fill={accent} stroke={stroke} strokeWidth="1.2" />
+          <path d="M22.5 6 v4 M20.5 8 h4" stroke={stroke} strokeWidth="1.6" strokeLinecap="round" />
+          <path d="M15 15 L17 26 h11 L30 15 L26 18 L22.5 14 L19 18 Z" fill={fill} stroke={stroke} strokeWidth="1.5" />
+          <rect x="11" y="33" width="23" height="3.5" rx="1" fill={accent} stroke={stroke} strokeWidth="1.2" />
         </g>
       )}
     </svg>
@@ -335,66 +291,53 @@ function renderAlphaPiece(
 }
 
 /* =========================================================================
-   4. WOOD PIECE SET (Warm Oak & Walnut Grain Tones)
+   4. WOOD CARVED PIECE SET
    ========================================================================= */
-function renderWoodPiece(
-  type: PieceType,
-  isWhite: boolean,
-  className: string,
-  size: number | string
-) {
+function renderWood(type: PieceType, isWhite: boolean, className: string, size: number | string) {
   const fill = isWhite ? '#d7a15c' : '#573312';
   const stroke = isWhite ? '#784c19' : '#291404';
-  const highlight = isWhite ? '#ecc48f' : '#7b4b1e';
 
   return (
-    <svg viewBox="0 0 45 45" width={size} height={size} className={`select-none pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] ${className}`}>
-      <defs>
-        <linearGradient id={`wood-grad-${isWhite ? 'w' : 'b'}`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={highlight} />
-          <stop offset="100%" stopColor={fill} />
-        </linearGradient>
-      </defs>
+    <svg viewBox="0 0 45 45" width={size} height={size} className={`select-none pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)] ${className}`}>
       {type === 'p' && (
-        <g>
-          <circle cx="22.5" cy="13" r="5" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.5" />
-          <path d="M19 18l-3 13h13l-3-13z" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.5" />
-          <rect x="12" y="32" width="21" height="5" rx="2" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.5" />
+        <g fill={fill} stroke={stroke} strokeWidth="1.5">
+          <circle cx="22.5" cy="13" r="5" />
+          <path d="M19 18 L16 31 h13 L26 18 Z" />
+          <rect x="12" y="31" width="21" height="5" rx="2" />
         </g>
       )}
       {type === 'n' && (
-        <g>
-          <path d="M22 9c-3 0-5 2-6 5s1 6-2 8c-2 1-3 2-4 5 2 0 4-1 6-1-1 3-1 6 2 7 2 1 6 1 8-1 2-2 3-6 4-9 1-3 1-6-1-9-1.5-2.5-3.5-3.5-6-6z" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.5" />
+        <g fill={fill} stroke={stroke} strokeWidth="1.5">
+          <path d="M22 9 C19 9 17 11 16 14 C14 16 12 18 11 21 C13 21 15 20 17 20 C16 23 16 26 18 29 C20 30 24 30 26 28 C28 26 29 22 30 19 C31 16 30 13 28 10 C26 9 24 9 22 9 Z" />
           <circle cx="16" cy="16" r="1.5" fill={stroke} />
-          <rect x="11" y="32" width="23" height="5" rx="2" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.5" />
+          <rect x="11" y="31" width="23" height="5" rx="2" />
         </g>
       )}
       {type === 'b' && (
-        <g>
-          <circle cx="22.5" cy="7" r="1.5" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.2" />
-          <path d="M22.5 9c-3 0-6 4-6 9 0 3 1.5 5.5 3.5 7-1.5 1.5-3 3.5-3 6h11c0-2.5-1.5-4.5-3-6 2-1.5 3.5-4 3.5-7 0-5-3-9-6-9z" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.5" />
-          <path d="M22.5 13v5M20 15.5h5" stroke={stroke} strokeWidth="1.4" />
-          <rect x="11" y="32" width="23" height="5" rx="2" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.5" />
+        <g fill={fill} stroke={stroke} strokeWidth="1.5">
+          <circle cx="22.5" cy="7" r="1.5" />
+          <path d="M22.5 9 C19.5 9 16.5 13 16.5 18 C16.5 21 18 23.5 20 25 C18.5 26.5 17 28.5 17 31 h11 C28 28.5 26.5 26.5 25 25 C27 23.5 28.5 21 28.5 18 C28.5 13 25.5 9 22.5 9 Z" />
+          <rect x="11" y="31" width="23" height="5" rx="2" />
         </g>
       )}
       {type === 'r' && (
-        <g>
-          <path d="M13 13h19v5h-2v9h2v3H13v-3h2v-9h-2z" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.5" />
-          <rect x="10" y="32" width="25" height="5" rx="2" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.5" />
+        <g fill={fill} stroke={stroke} strokeWidth="1.5">
+          <path d="M13 13 h19 v5 h-2 v9 h2 v3 h-19 v-3 h2 v-9 h-2 Z" />
+          <rect x="10" y="31" width="25" height="5" rx="2" />
         </g>
       )}
       {type === 'q' && (
-        <g>
-          <path d="M12 17l3.2 11h14.6L33 17l-5.6 5.2-4.9-10.4-4.9 10.4L12 17z" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.5" />
-          <circle cx="22.5" cy="10" r="1.6" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.2" />
-          <rect x="10" y="32" width="25" height="5" rx="2" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.5" />
+        <g fill={fill} stroke={stroke} strokeWidth="1.5">
+          <path d="M12 17 L15.2 28 h14.6 L33 17 L27.4 22.2 L22.5 11.8 L17.6 22.2 Z" />
+          <circle cx="22.5" cy="10" r="1.6" />
+          <rect x="10" y="31" width="25" height="5" rx="2" />
         </g>
       )}
       {type === 'k' && (
-        <g>
-          <path d="M22.5 5v5M20 7.5h5" stroke={stroke} strokeWidth="1.8" strokeLinecap="round" />
-          <path d="M15 14c-1 3 1 7 4 9 0 2-2 4-4 6h15c-2-2-4-4-4-6 3-2 5-6 4-9-2 2-5 3-7.5 3S17 16 15 14z" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.5" />
-          <rect x="10" y="32" width="25" height="5" rx="2" fill={`url(#wood-grad-${isWhite ? 'w' : 'b'})`} stroke={stroke} strokeWidth="1.5" />
+        <g fill={fill} stroke={stroke} strokeWidth="1.5">
+          <path d="M22.5 5 v5 M20 7.5 h5" strokeWidth="1.8" />
+          <path d="M15 14 C14 17 16 21 19 23 C17 25 15 27 15 29 h15 C30 27 28 25 26 23 C29 21 31 17 30 14 C28 16 25 17 22.5 17 C20 17 17 16 15 14 Z" />
+          <rect x="10" y="31" width="25" height="5" rx="2" />
         </g>
       )}
     </svg>
@@ -402,16 +345,10 @@ function renderWoodPiece(
 }
 
 /* =========================================================================
-   5. 8-BIT RETRO PIECE SET (Pixel Art Arcade Style)
+   5. 8-BIT RETRO PIECE SET
    ========================================================================= */
-function render8BitPiece(
-  type: PieceType,
-  isWhite: boolean,
-  className: string,
-  size: number | string
-) {
+function render8Bit(type: PieceType, isWhite: boolean, className: string, size: number | string) {
   const fill = isWhite ? '#5eead4' : '#f43f5e';
-  const border = isWhite ? '#042f2e' : '#4c0519';
 
   return (
     <svg viewBox="0 0 16 16" width={size} height={size} className={`select-none pointer-events-none drop-shadow-[0_2px_0px_#000] shape-rendering-crispEdges ${className}`}>
@@ -479,22 +416,17 @@ function render8BitPiece(
 }
 
 /* =========================================================================
-   6. 3D ISOMETRIC PIECE SET (Tactile Beveled Depth & Gloss)
+   6. 3D TACTILE BEVELED PIECE SET
    ========================================================================= */
-function render3DPiece(
-  type: PieceType,
-  isWhite: boolean,
-  className: string,
-  size: number | string
-) {
+function render3D(type: PieceType, isWhite: boolean, className: string, size: number | string) {
   const baseGrad = isWhite ? '#e2e8f0' : '#334155';
   const gloss = isWhite ? '#ffffff' : '#475569';
   const shadow = isWhite ? '#94a3b8' : '#0f172a';
 
   return (
-    <svg viewBox="0 0 45 45" width={size} height={size} className={`select-none pointer-events-none drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] ${className}`}>
+    <svg viewBox="0 0 45 45" width={size} height={size} className={`select-none pointer-events-none drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] ${className}`}>
       <defs>
-        <linearGradient id={`grad3d-${isWhite ? 'w' : 'b'}`} x1="0%" y1="0%" x2="0%" y2="100%">
+        <linearGradient id={`g3d-${isWhite ? 'w' : 'b'}`} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor={gloss} />
           <stop offset="50%" stopColor={baseGrad} />
           <stop offset="100%" stopColor={shadow} />
@@ -502,44 +434,43 @@ function render3DPiece(
       </defs>
       {type === 'p' && (
         <g>
-          <ellipse cx="22.5" cy="13" rx="5.5" ry="5" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
-          <path d="M18 17l-3 14h15l-3-14z" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
-          <ellipse cx="22.5" cy="33" rx="10" ry="3.5" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <ellipse cx="22.5" cy="13" rx="5.5" ry="5" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <path d="M18 17 L15 31 h15 L27 17 Z" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <ellipse cx="22.5" cy="33" rx="10" ry="3.5" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
         </g>
       )}
       {type === 'n' && (
         <g>
-          <path d="M22 9c-3.2 0-5.4 2.2-6.3 5.3s.8 7.2-2.1 9.2c-2.1 1.4-4.2 2.1-5.1 5.2 2.1 0 4.2-1.1 6.3-1.1-1.1 3.2-1.1 6.3 2.1 7.4 2.1 1.1 6.3 1.1 8.4-1.1 2.1-2.1 3.2-6.3 4.2-9.5 1.1-3.2 1.1-6.3-1.1-9.5-1.5-2.6-3.6-3.7-6.4-5.9z" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <path d="M22 9 C19 9 17 11 16 14 C14 16 12 18 11 21 C13 21 15 20 17 20 C16 23 16 26 18 29 C20 30 24 30 26 28 C28 26 29 22 30 19 C31 16 30 13 28 10 C26 9 24 9 22 9 Z" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
           <circle cx="16" cy="16.5" r="1.5" fill="#000" />
-          <ellipse cx="22.5" cy="33" rx="11" ry="3.5" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <ellipse cx="22.5" cy="33" rx="11" ry="3.5" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
         </g>
       )}
       {type === 'b' && (
         <g>
-          <circle cx="22.5" cy="6.5" r="1.8" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
-          <path d="M22.5 8c-3.1 0-6.2 4.1-6.2 9.3 0 3.1 1.5 5.7 3.6 7.2-1.5 1.5-3.1 3.6-3.1 6.2h11.4c0-2.6-1.6-4.7-3.1-6.2 2.1-1.5 3.6-4.1 3.6-7.2 0-5.2-3.1-9.3-6.2-9.3z" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
-          <path d="M22.5 12.5v5M20 15h5" stroke="#000" strokeWidth="1.2" />
-          <ellipse cx="22.5" cy="33" rx="11" ry="3.5" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <circle cx="22.5" cy="6.5" r="1.8" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <path d="M22.5 8 C19.5 8 16.5 12 16.5 17.5 C16.5 20.5 18 23 19.5 24.5 L17.5 32 h10 L25.5 24.5 C27 23 28.5 20.5 28.5 17.5 C28.5 12 25.5 8 22.5 8 Z" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <ellipse cx="22.5" cy="33" rx="11" ry="3.5" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
         </g>
       )}
       {type === 'r' && (
         <g>
-          <path d="M12 12h21v5.5h-2v9h3v3H11v-3h3v-9h-2V12z" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
-          <ellipse cx="22.5" cy="33" rx="12" ry="3.5" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <path d="M12 12 h21 v5.5 h-2 v9 h3 v3 h-23 v-3 h3 v-9 h-2 Z" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <ellipse cx="22.5" cy="33" rx="12" ry="3.5" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
         </g>
       )}
       {type === 'q' && (
         <g>
-          <path d="M12 18l3.2 10.5h14.6L33 18l-5.6 5.2-4.9-10.4-4.9 10.4L12 18z" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
-          <circle cx="22.5" cy="10" r="1.8" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
-          <ellipse cx="22.5" cy="33" rx="12" ry="3.5" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <path d="M12 18 L15.2 28.5 h14.6 L33 18 L27.4 23.2 L22.5 12.8 L17.6 23.2 Z" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <circle cx="22.5" cy="10" r="1.8" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <ellipse cx="22.5" cy="33" rx="12" ry="3.5" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
         </g>
       )}
       {type === 'k' && (
         <g>
-          <path d="M22.5 5.5v5M20 8h5" stroke="#000" strokeWidth="1.8" strokeLinecap="round" />
-          <path d="M15 14.5c-1 3.1 1 7.2 4 9.3 0 2.1-2 4.1-4 6.2h15c-2-2.1-4-4.1-4-6.2 3-2.1 5-6.2 4-9.3-2 2.1-5 3.1-7.5 3.1s-5.5-1-7.5-3.1z" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
-          <ellipse cx="22.5" cy="33" rx="12" ry="3.5" fill={`url(#grad3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <path d="M22.5 5.5 v5 M20 8 h5" stroke="#000" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M15 14.5 C14 17.5 16 21.5 19 23.5 L17 31 h11 L26 23.5 C29 21.5 31 17.5 30 14.5 C28 16.5 25 17.5 22.5 17.5 C20 17.5 17 16.5 15 14.5 Z" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
+          <ellipse cx="22.5" cy="33" rx="12" ry="3.5" fill={`url(#g3d-${isWhite ? 'w' : 'b'})`} stroke="#000" strokeWidth="1" />
         </g>
       )}
     </svg>

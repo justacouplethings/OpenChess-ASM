@@ -1,5 +1,5 @@
-// Stockfish & Free Unlocked Game Review Evaluator
-// Mathematical precision adhering to Chess.com CAPS2 Win Probability models & Centipawn Loss (CPL)
+// OpenChess Move Classification and CAPS Evaluation Model
+// Clean-room implementation for accurate move accuracy and CPL metrics
 
 export type MoveClassificationType =
   | 'brilliant'
@@ -48,22 +48,24 @@ export interface ReviewReport {
 }
 
 /**
- * Maps Centipawns (cp) to Win Probability (W%) using CAPS2 sigmoid formula:
- * W = 50 + 50 * (2 / (1 + exp(-0.00368208 * cp)) - 1)
+ * Maps centipawns to win percentage (0 to 100%) using CAPS2 sigmoid
  */
 export function calculateWinPercentage(cp: number): number {
-  const clampedCp = Math.max(-2000, Math.min(2000, cp));
-  const expVal = Math.exp(-0.00368208 * clampedCp);
-  const winProb = 50 + 50 * (2 / (1 + expVal) - 1);
-  return Math.max(0, Math.min(100, winProb));
+  if (isNaN(cp)) return 50;
+  const clamped = Math.max(-1500, Math.min(1500, cp));
+  const expVal = Math.exp(-0.003682 * clamped);
+  const prob = 50 + 50 * (2 / (1 + expVal) - 1);
+  return Math.max(0, Math.min(100, Math.round(prob * 10) / 10));
 }
 
 /**
- * Calculates material balance on board from FEN
+ * Counts material from piece placement in FEN string
  */
-export function calculateMaterialCount(fen: string): { white: number; black: number } {
-  const piecePlacement = fen.split(' ')[0] || '';
-  const pieceValues: Record<string, number> = {
+export function getMaterialPoints(fen: string): { white: number; black: number } {
+  const [placement] = fen.split(' ');
+  if (!placement) return { white: 0, black: 0 };
+
+  const values: Record<string, number> = {
     p: 1,
     n: 3,
     b: 3,
@@ -75,13 +77,13 @@ export function calculateMaterialCount(fen: string): { white: number; black: num
   let white = 0;
   let black = 0;
 
-  for (const char of piecePlacement) {
-    const lower = char.toLowerCase();
-    if (pieceValues[lower] !== undefined) {
+  for (const char of placement) {
+    const val = values[char.toLowerCase()];
+    if (val !== undefined) {
       if (char === char.toUpperCase()) {
-        white += pieceValues[lower];
+        white += val;
       } else {
-        black += pieceValues[lower];
+        black += val;
       }
     }
   }
@@ -90,134 +92,109 @@ export function calculateMaterialCount(fen: string): { white: number; black: num
 }
 
 /**
- * Checks if a move sacrificed material
- */
-export function isMaterialSacrifice(
-  fenBefore: string,
-  fenAfter: string,
-  color: 'w' | 'b'
-): boolean {
-  const before = calculateMaterialCount(fenBefore);
-  const after = calculateMaterialCount(fenAfter);
-
-  if (color === 'w') {
-    const netChange = (after.white - after.black) - (before.white - before.black);
-    return netChange <= -2; // Sacrificed at least 2 points (minor piece or exchange)
-  } else {
-    const netChange = (after.black - after.white) - (before.black - before.white);
-    return netChange <= -2;
-  }
-}
-
-/**
- * Classifies a move based on centipawn loss and CAPS2 win probability loss
+ * Evaluates move classification based on centipawn loss and tactical criteria
  */
 export function classifyMove(params: {
-  winProbBefore: number;
-  winProbAfter: number;
-  centipawnsBefore: number;
-  centipawnsAfter: number;
+  cpBefore: number;
+  cpAfter: number;
   color: 'w' | 'b';
-  isBookMove?: boolean;
-  isSacrifice?: boolean;
-  isEngineBest?: boolean;
-  opponentPreviousBlundered?: boolean;
+  isEngineBest: boolean;
+  isBook: boolean;
+  materialSacrifice: boolean;
+  opponentBlunderedBefore: boolean;
 }): { classification: MoveClassificationType; explanation: string } {
   const {
-    winProbBefore,
-    winProbAfter,
+    cpBefore,
+    cpAfter,
     color,
-    isBookMove = false,
-    isSacrifice = false,
-    isEngineBest = false,
-    opponentPreviousBlundered = false,
+    isEngineBest,
+    isBook,
+    materialSacrifice,
+    opponentBlunderedBefore,
   } = params;
 
-  // Win probability loss from perspective of current mover
-  const currentWinProbBefore = color === 'w' ? winProbBefore : 100 - winProbBefore;
-  const currentWinProbAfter = color === 'w' ? winProbAfter : 100 - winProbAfter;
-  const winProbLoss = Math.max(0, currentWinProbBefore - currentWinProbAfter);
+  // Normalized mover perspective
+  const moverCpBefore = color === 'w' ? cpBefore : -cpBefore;
+  const moverCpAfter = color === 'w' ? cpAfter : -cpAfter;
+  const cpl = Math.max(0, moverCpBefore - moverCpAfter);
 
-  // Centipawn loss from mover perspective
-  const cpBefore = color === 'w' ? params.centipawnsBefore : -params.centipawnsBefore;
-  const cpAfter = color === 'w' ? params.centipawnsAfter : -params.centipawnsAfter;
-  const cpl = Math.max(0, cpBefore - cpAfter);
+  const winBefore = calculateWinPercentage(moverCpBefore);
+  const winAfter = calculateWinPercentage(moverCpAfter);
+  const winLoss = Math.max(0, winBefore - winAfter);
 
-  // 1. Book Move check
-  if (isBookMove && winProbLoss < 5) {
+  // Book move
+  if (isBook && winLoss < 4) {
     return {
       classification: 'book',
       explanation: 'Established opening theory book move.',
     };
   }
 
-  // 2. Brilliant move (!!)
-  // Material sacrifice that retains or improves winning advantage
-  if (isSacrifice && currentWinProbAfter >= 65 && winProbLoss <= 3) {
+  // Brilliant (!!) - tactical sacrifice retaining strong advantage
+  if (materialSacrifice && winAfter >= 60 && winLoss <= 2) {
     return {
       classification: 'brilliant',
-      explanation: 'A brilliant tactical sacrifice that retains a decisive advantage!',
+      explanation: 'A brilliant tactical piece sacrifice that maintains a winning initiative!',
     };
   }
 
-  // 3. Great move (!)
-  // Finding the singular top move in a complex or critical position
-  if (isEngineBest && currentWinProbAfter >= 50 && winProbLoss <= 1 && currentWinProbBefore <= 55) {
+  // Great (!) - finding a critical resource
+  if (isEngineBest && winAfter >= 48 && winLoss <= 1 && winBefore <= 52) {
     return {
       classification: 'great',
-      explanation: 'A great find! Finding the only move that keeps the position equal or winning.',
+      explanation: 'A great find! Finding the critical defensive or attacking continuation.',
     };
   }
 
-  // 4. Best move
-  if (isEngineBest || cpl <= 10 || winProbLoss <= 1.5) {
+  // Best move
+  if (isEngineBest || cpl <= 10) {
     return {
       classification: 'best',
-      explanation: 'The best move according to deep engine analysis.',
+      explanation: 'The best move recommended by the engine.',
     };
   }
 
-  // 5. Miss: failing to punish an opponent's blunder
-  if (opponentPreviousBlundered && cpl > 70) {
+  // Miss
+  if (opponentBlunderedBefore && cpl >= 70) {
     return {
       classification: 'miss',
-      explanation: 'Missed a winning opportunity to punish your opponent’s blunder.',
+      explanation: 'A missed opportunity to punish the opponent’s previous tactical blunder.',
     };
   }
 
-  // 6. Blunder (??)
-  if (cpl > 200 || winProbLoss > 20) {
+  // Blunder (??)
+  if (cpl >= 200 || winLoss >= 20) {
     return {
       classification: 'blunder',
-      explanation: 'A blunder that drastically swings the evaluation in the opponent’s favor.',
+      explanation: 'A blunder that drastically shifts the evaluation in your opponent’s favor.',
     };
   }
 
-  // 7. Mistake (?)
-  if (cpl > 90 || winProbLoss > 10) {
+  // Mistake (?)
+  if (cpl >= 90 || winLoss >= 10) {
     return {
       classification: 'mistake',
-      explanation: 'A mistake that relinquishes significant positional control.',
+      explanation: 'A mistake that surrenders significant positional control.',
     };
   }
 
-  // 8. Inaccuracy (?!)
-  if (cpl > 35 || winProbLoss > 4) {
+  // Inaccuracy (?!)
+  if (cpl >= 35 || winLoss >= 4) {
     return {
       classification: 'inaccuracy',
-      explanation: 'An inaccuracy that allows the opponent to equalize or gain ground.',
+      explanation: 'An inaccuracy that lets the opponent equalize or gain activity.',
     };
   }
 
-  // 9. Excellent
-  if (cpl <= 25 || winProbLoss <= 2.5) {
+  // Excellent
+  if (cpl <= 25) {
     return {
       classification: 'excellent',
-      explanation: 'An excellent choice maintaining strong initiative.',
+      explanation: 'An excellent choice maintaining active pressure.',
     };
   }
 
-  // 10. Good
+  // Good
   return {
     classification: 'good',
     explanation: 'A solid move keeping the position balanced.',
@@ -225,21 +202,19 @@ export function classifyMove(params: {
 }
 
 /**
- * Calculates overall accuracy score (0 to 100%)
+ * CAPS Accuracy formula
  */
 export function calculateAccuracy(moves: EvaluatedMove[], color: 'w' | 'b'): number {
-  const playerMoves = moves.filter((m) => m.color === color);
-  if (playerMoves.length === 0) return 100;
+  const moverMoves = moves.filter((m) => m.color === color);
+  if (moverMoves.length === 0) return 100;
 
-  let totalScore = 0;
-  for (const move of playerMoves) {
-    const loss = move.winProbLoss;
-    // Non-linear CAPS accuracy mapping:
-    // Small losses yield high 90s, larger losses drop sharply
-    const moveAccuracy = 100 * Math.exp(-0.045 * loss);
-    totalScore += moveAccuracy;
+  let totalAcc = 0;
+  for (const m of moverMoves) {
+    // Non-linear loss decay curve
+    const moveScore = 100 * Math.exp(-0.04 * m.winProbLoss);
+    totalAcc += moveScore;
   }
 
-  const rawAcc = totalScore / playerMoves.length;
-  return Math.round(Math.max(10, Math.min(100, rawAcc)) * 10) / 10;
+  const result = totalAcc / moverMoves.length;
+  return Math.round(Math.max(15, Math.min(100, result)) * 10) / 10;
 }

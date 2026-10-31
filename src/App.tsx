@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar, ActiveTab } from './components/layout/Navbar';
+import { HomeHero } from './components/home/HomeHero';
 import { PlayView } from './components/play/PlayView';
 import { BotsView } from './components/bots/BotsView';
 import { PuzzlesView } from './components/puzzles/PuzzlesView';
@@ -20,7 +21,7 @@ import { ChessBot } from './data/bots';
 import { OpeningData } from './data/openings';
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('play');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('home');
   const [userProfile, setUserProfile] = useState<UserProfile>(loadUserProfile);
 
   // Modals
@@ -28,21 +29,22 @@ export const App: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  // Cross-navigation states
+  // Overrides for cross-navigation
   const [selectedBotOverride, setSelectedBotOverride] = useState<ChessBot | null>(null);
   const [analysisMovesOverride, setAnalysisMovesOverride] = useState<
     { from: string; to: string; san: string }[] | undefined
   >(undefined);
 
-  // Sync sound settings with audio engine
+  // Sync sound settings
   useEffect(() => {
     sound.setEnabled(userProfile.preferences.soundEnabled);
     sound.setVolume(userProfile.preferences.volume);
   }, [userProfile.preferences]);
 
-  // Update document title dynamically
+  // Page title sync
   useEffect(() => {
     const titles: Record<ActiveTab, string> = {
+      home: 'openchess.com - Play Chess Online on the #1 Free Site',
       play: 'Play Chess Online - openchess.com',
       bots: 'Play vs AI Bots - openchess.com',
       puzzles: 'Chess Puzzles & Puzzle Rush - openchess.com',
@@ -73,7 +75,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-chess-bg text-white font-sans antialiased overflow-x-hidden">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#312e2b] text-white font-sans antialiased overflow-x-hidden select-none">
       {/* Sidebar Navigation */}
       <Navbar
         activeTab={activeTab}
@@ -86,6 +88,17 @@ export const App: React.FC = () => {
 
       {/* Main Content Area */}
       <main className="flex-1 min-w-0 pb-16 md:pb-6 overflow-y-auto">
+        {activeTab === 'home' && (
+          <HomeHero
+            onStartPlay={() => setActiveTab('play')}
+            onPlayBots={() => setActiveTab('bots')}
+            onSolvePuzzles={() => setActiveTab('puzzles')}
+            onOpenAnalysis={() => setActiveTab('review')}
+            onOpenLearn={() => setActiveTab('openings')}
+            userProfile={userProfile}
+          />
+        )}
+
         {activeTab === 'play' && (
           <PlayView
             userProfile={userProfile}
