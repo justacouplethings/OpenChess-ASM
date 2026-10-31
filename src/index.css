@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #312e2b;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Helvetica, Arial, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbars matching Chess.com */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #262522;
+}
+::-webkit-scrollbar-thumb {
+  background: #454340;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #5a5753;
+}
+
+/* Board Themes */
+.theme-green {
+  --square-light: #eeeed2;
+  --square-dark: #769656;
+  --highlight-last-light: #f5f682;
+  --highlight-last-dark: #b9ca43;
+}
+
+.theme-wood {
+  --square-light: #e8c39e;
+  --square-dark: #9e6a38;
+  --highlight-last-light: #f5e49a;
+  --highlight-last-dark: #cda85a;
+}
+
+.theme-glass {
+  --square-light: #70a4a2;
+  --square-dark: #3a6b68;
+  --highlight-last-light: #9fd0ce;
+  --highlight-last-dark: #588f8c;
+}
+
+.theme-marble {
+  --square-light: #e2e8f0;
+  --square-dark: #64748b;
+  --highlight-last-light: #cbd5e1;
+  --highlight-last-dark: #475569;
+}
+
+.theme-neon {
+  --square-light: #4deeea;
+  --square-dark: #0f3854;
+  --highlight-last-light: #ffe600;
+  --highlight-last-dark: #00adb5;
+}
+
+.theme-gothic {
+  --square-light: #c4b79b;
+  --square-dark: #6b4c35;
+  --highlight-last-light: #dfd4bc;
+  --highlight-last-dark: #8c674b;
+}
+
+/* Smooth Hardware-Accelerated Piece Movement */
+.piece-transition {
+  transition: transform 220ms cubic-bezier(0.2, 0, 0.2, 1);
+  will-change: transform;
+}
+
+/* In-Check King Glow */
+.king-check {
+  background: radial-gradient(ellipse at center, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.5) 60%, rgba(185, 28, 28, 0) 100%) !important;
+}
+
+/* Dragging active piece styles */
+.piece-dragging {
+  cursor: grabbing !important;
+  z-index: 100 !important;
+  opacity: 0.95;
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.55));
+}
+
+/* Chess coordinate labels */
+.coord-label {
+  position: absolute;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
